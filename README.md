@@ -37,3 +37,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 # Notes
 - Identify collected cards by scanning with the camera (image recognition)
+- Customize theme based on pokemon https://pokemonpalette.com/

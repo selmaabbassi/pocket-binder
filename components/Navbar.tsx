@@ -4,8 +4,8 @@ export function Navbar() {
   return (
     <div className="navbar bg-base-100">
       <div className="navbar-start">
-        <Link href="/" className="btn btn-primary text-xl">
-          Home
+        <Link href="/" className="btn text-xl">
+          <span className="material-symbols-outlined">home</span>
         </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
@@ -14,16 +14,13 @@ export function Navbar() {
             <Link href="/my-collection">My collection</Link>
           </li>
           <li>
-            <Link href="/sets">Sets</Link>
-          </li>
-          <li>
-            <a>Test</a>
+            <Link href="/series">Series</Link>
           </li>
         </ul>
       </div>
       <div className="navbar-end">
-        <Link href="/login" className="btn btn-primary text-xl">
-          Login
+        <Link href="/login" className="btn text-xl">
+          <span className="material-symbols-outlined">person</span>
         </Link>
       </div>
     </div>
