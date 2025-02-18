@@ -1,26 +1,48 @@
-import Link from "next/link";
+"use client";
+
 import { SeriesLink } from "../../../../components/SeriesLink";
 import { Header } from "../../../../components/Header";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Series, Subset } from "@prisma/client";
 
-const seriesData: Record<
-  string,
-  { name: string; subsets: { name: string; slug: string }[] }
-> = {
-  "scarlet-and-violet": {
-    name: "Scarlet & Violet",
-    subsets: [
-      { name: "Prismatic Evolutions", slug: "prismatic-evolutions" },
-      { name: "Surging Sparks", slug: "surging-sparks" },
-    ],
-  },
-};
+export default function SubSetPage() {
+  const { setSlug: seriesSlug } = useParams();
+  const [subsets, setSubsets] = useState<Subset[]>([]);
+  const [series, setSeries] = useState<Series>();
 
-export default function SubSetPage({
-  params,
-}: {
-  params: { setSlug: string };
-}) {
-  const series = seriesData[params.setSlug];
+  useEffect(() => {
+    async function getSeries() {
+      if (!seriesSlug) return;
+
+      try {
+        const res = await fetch(`/api/series/${seriesSlug}`);
+        if (!res.ok) throw new Error("Failed to fetch series");
+
+        const data = await res.json();
+        setSeries(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function getSubsets() {
+      if (!seriesSlug) return;
+
+      try {
+        const res = await fetch(`/api/subsets/${seriesSlug}`);
+        if (!res.ok) throw new Error("Failed to fetch subsets");
+
+        const data = await res.json();
+        setSubsets(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    getSeries();
+    getSubsets();
+  }, [seriesSlug]);
 
   if (!series) return <h1>Series Not Found</h1>;
 
@@ -28,11 +50,11 @@ export default function SubSetPage({
     <div>
       <Header title={series.name} backUrl="/series" />
       <div className="grid grid-cols-1 grid-rows-5 gap-4">
-        {series.subsets.map((subset) => (
+        {subsets.map((subset) => (
           <div key={subset.slug}>
             <SeriesLink
               title={subset.name}
-              href={`/series/${params.setSlug}/${subset.slug}`}
+              href={`/series/${seriesSlug}/${subset.slug}`}
             />
           </div>
         ))}
