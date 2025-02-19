@@ -21,13 +21,14 @@ model Series {
 model Subset {
   slug       String  @id
   name       String
-  seriesSlug String  // Foreign key to Series (without relation)
+  seriesSlug String
 }
 
 model Card {
   id         String  @id @default(uuid())
+  number     String
   name       String
   imageUrl   String
   collected  Boolean @default(false)
-  subsetSlug String  // Foreign key to Subset (without relation)
+  subsetSlug String
 }

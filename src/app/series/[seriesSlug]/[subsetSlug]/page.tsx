@@ -4,47 +4,39 @@ import Image from "next/image";
 import { Header } from "../../../../../components/Header";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { usePocketBinderContext } from "@/app/context/PocketBinderContext";
 import { Card } from "@prisma/client";
 
 export default function CardsPage() {
-  const { setSlug, subsetSlug } = useParams();
+  const { seriesSlug, subsetSlug } = useParams();
   const [cards, setCards] = useState<Card[]>([]);
-  const [series, setSeries] = useState("");
-  const [subset, setSubset] = useState("");
+  const { selectedSeries, selectedSubset, setSelectedSubset } =
+    usePocketBinderContext();
 
   useEffect(() => {
-    async function getSeries() {
-      if (!seriesSlug) return;
-
+    async function getSubset() {
       try {
-        const res = await fetch(`/api/series/${seriesSlug}`);
-        if (!res.ok) throw new Error("Failed to fetch series");
-
+        const res = await fetch(`/api/subset/${subsetSlug}`);
         const data = await res.json();
-        setSeries(data);
+        setSelectedSubset(data);
       } catch (error) {
         console.error(error);
       }
     }
 
     async function getCards() {
-      if (!setSlug || !subsetSlug) return;
-
       try {
-        const res = await fetch(`/api/series/${setSlug}/${subsetSlug}/cards`);
-        if (!res.ok) throw new Error("Failed to fetch cards");
-
+        const res = await fetch(`/api/cards/${subsetSlug}`);
         const data = await res.json();
-        setCards(data.cards);
-        setSeriesName(data.seriesName); // Assuming API returns the series name
-        setSubsetName(data.subsetName); // Assuming API returns the subset name
+        setCards(data);
       } catch (error) {
         console.error(error);
       }
     }
 
+    getSubset();
     getCards();
-  }, [setSlug, subsetSlug]);
+  }, [seriesSlug, subsetSlug, setSelectedSubset]);
 
   const toggleCollected = (id: string) => {
     setCards((prevCards) =>
@@ -54,14 +46,15 @@ export default function CardsPage() {
     );
   };
 
-  if (!series || !subset) return <h1>Subset Not Found</h1>;
+  if (!seriesSlug || !subsetSlug || !selectedSeries || !selectedSubset)
+    return <h1>Cards Not Found</h1>;
 
   return (
     <div>
       <Header
-        title={series.name}
-        backUrl={`/series/${params.setSlug}`}
-        subtitle={subset.name}
+        title={selectedSeries.name}
+        backUrl={`/series/${seriesSlug}`}
+        subtitle={selectedSubset.name}
       />
 
       <div className="flex justify-center items-center min-h-screen">
@@ -85,7 +78,7 @@ export default function CardsPage() {
               </figure>
               <div className="card-body text-center">
                 <h2>
-                  <b>#{card.id}</b> {card.name}
+                  <b>#{card.number}</b> {card.name}
                 </h2>
                 <div className="card-actions justify-end">
                   <button

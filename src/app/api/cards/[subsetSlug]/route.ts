@@ -11,11 +11,8 @@ export async function GET(
     where: { subsetSlug: params.subsetSlug },
   });
 
-  if (!cards.length) {
-    return NextResponse.json(
-      { error: "No cards found for this subset" },
-      { status: 404 }
-    );
+  if (cards.length === 0) {
+    return NextResponse.json({ error: "Cards not found" }, { status: 404 });
   }
 
   return NextResponse.json(cards);
