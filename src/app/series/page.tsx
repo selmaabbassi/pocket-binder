@@ -1,21 +1,16 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { Header } from "../../../components/Header";
 import { SeriesLink } from "../../../components/SeriesLink";
 import { Series } from "@prisma/client";
 
-export default function SeriesPage() {
-  const [series, setSeries] = useState<Series[]>([]);
+async function getSeries() {
+  const res = await fetch(`${process.env.BASE_URL}/api/series`, {
+    cache: "no-store",
+  });
+  return res.json();
+}
 
-  useEffect(() => {
-    async function getSeries() {
-      const res = await fetch("/api/series");
-      const data = await res.json();
-      setSeries(data);
-    }
-    getSeries();
-  }, []);
+export default async function SeriesPage() {
+  const series: Series[] = await getSeries();
 
   return (
     <>

@@ -1,45 +1,31 @@
-"use client";
-
 import { SeriesLink } from "../../../../components/SeriesLink";
 import { Header } from "../../../../components/Header";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { usePocketBinderContext } from "@/app/context/PocketBinderContext";
-import { Subset } from "@prisma/client";
+import { Series, Subset } from "@prisma/client";
 
-export default function SubSetPage() {
-  const { seriesSlug } = useParams();
-  const [subsets, setSubsets] = useState<Subset[]>([]);
-  const { selectedSeries, setSelectedSeries } = usePocketBinderContext();
+async function getSeries(seriesSlug: string) {
+  const res = await fetch(`${process.env.BASE_URL}/api/series/${seriesSlug}`, {
+    cache: "no-store",
+  });
+  return res.json();
+}
 
-  useEffect(() => {
-    async function getSeries() {
-      try {
-        const res = await fetch(`/api/series/${seriesSlug}`);
-        const data = await res.json();
-        setSelectedSeries(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
+async function getSubsets(seriesSlug: string) {
+  const res = await fetch(`${process.env.BASE_URL}/api/subsets/${seriesSlug}`, {
+    cache: "no-store",
+  });
+  return res.json();
+}
 
-    async function getSubsets() {
-      try {
-        const res = await fetch(`/api/subsets/${seriesSlug}`);
-        const data = await res.json();
-        setSubsets(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    if (!selectedSeries || selectedSeries.slug !== seriesSlug) {
-      getSeries();
-      getSubsets();
-    }
-  }, [seriesSlug, selectedSeries, setSelectedSeries]);
+export default async function SubSetPage({
+  params,
+}: {
+  params: { seriesSlug: string };
+}) {
+  const { seriesSlug } = params;
+  const selectedSeries: Series = await getSeries(seriesSlug);
+  const subsets: Subset[] = await getSubsets(seriesSlug);
 
-  if (!selectedSeries || selectedSeries.slug !== seriesSlug)
-    return <>Subset not found</>;
+  if (!selectedSeries) return <>Subset not found</>;
 
   return (
     <div>

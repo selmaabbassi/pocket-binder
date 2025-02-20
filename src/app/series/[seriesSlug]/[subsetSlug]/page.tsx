@@ -4,57 +4,64 @@ import Image from "next/image";
 import { Header } from "../../../../../components/Header";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { usePocketBinderContext } from "@/app/context/PocketBinderContext";
-import { Card } from "@prisma/client";
+import { Card, Series, Subset } from "@prisma/client";
 
 export default function CardsPage() {
   const { seriesSlug, subsetSlug } = useParams();
+  const [selectedSeries, setSelectedSeries] = useState<Series | null>(null);
+  const [selectedSubset, setSelectedSubset] = useState<Subset | null>(null);
   const [cards, setCards] = useState<Card[]>([]);
-  const { selectedSeries, selectedSubset, setSelectedSubset } =
-    usePocketBinderContext();
 
   useEffect(() => {
-    async function getSubset() {
+    async function fetchData() {
       try {
-        const res = await fetch(`/api/subset/${subsetSlug}`);
-        const data = await res.json();
-        setSelectedSubset(data);
+        const [seriesRes, subsetRes, cardsRes] = await Promise.all([
+          fetch(`/api/series/${seriesSlug}`).then((res) => res.json()),
+          fetch(`/api/subset/${subsetSlug}`).then((res) => res.json()),
+          fetch(`/api/cards/${subsetSlug}`).then((res) => res.json()),
+        ]);
+
+        setSelectedSeries(seriesRes);
+        setSelectedSubset(subsetRes);
+        setCards(cardsRes);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching data:", error);
       }
     }
 
-    async function getCards() {
-      try {
-        const res = await fetch(`/api/cards/${subsetSlug}`);
-        const data = await res.json();
-        setCards(data);
-      } catch (error) {
-        console.error(error);
-      }
+    fetchData();
+  }, [seriesSlug, subsetSlug]);
+
+  const toggleCollected = async (id: string, currentStatus: boolean) => {
+    try {
+      const res = await fetch(`/api/card/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ collected: !currentStatus }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update card");
+
+      const updatedCard = await res.json();
+
+      setCards((prevCards) =>
+        prevCards.map((card) =>
+          card.id === updatedCard.id ? updatedCard : card
+        )
+      );
+    } catch (error) {
+      console.error("Error updating card:", error);
     }
-
-    getSubset();
-    getCards();
-  }, [seriesSlug, subsetSlug, setSelectedSubset]);
-
-  const toggleCollected = (id: string) => {
-    setCards((prevCards) =>
-      prevCards.map((card) =>
-        card.id === id ? { ...card, collected: !card.collected } : card
-      )
-    );
   };
 
-  if (!seriesSlug || !subsetSlug || !selectedSeries || !selectedSubset)
-    return <h1>Cards Not Found</h1>;
+  if (!selectedSubset) return <h1>Cards Not Found</h1>;
 
   return (
     <div>
       <Header
-        title={selectedSeries.name}
+        title={selectedSeries?.name || "Loading..."}
         backUrl={`/series/${seriesSlug}`}
-        subtitle={selectedSubset.name}
+        subtitle={selectedSubset?.name || ""}
       />
 
       <div className="flex justify-center items-center min-h-screen">
@@ -85,7 +92,7 @@ export default function CardsPage() {
                     className={`btn ${
                       card.collected ? "btn-error" : "btn-success"
                     }`}
-                    onClick={() => toggleCollected(card.id)}
+                    onClick={() => toggleCollected(card.id, card.collected)}
                   >
                     <span className="material-symbols-outlined">
                       {card.collected ? "close" : "check"}
