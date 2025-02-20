@@ -19,7 +19,7 @@ export default {
       "cyberpunk",
       {
         pokeball: {
-          primary: "#5A7BBD",
+          primary: "#F6BD20",
           secondary: "#20416A",
           accent: "#FFDE00",
           neutral: "#D5C573",

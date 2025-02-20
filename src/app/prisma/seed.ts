@@ -38,6 +38,27 @@ async function main() {
         collected: true,
         subsetSlug: "prismatic-evolutions",
       },
+      {
+        name: "Sylveon EX",
+        number: "156",
+        imageUrl: "/scarlet-and-violet/prismatic-evolutions/svpe156.png",
+        collected: false,
+        subsetSlug: "prismatic-evolutions",
+      },
+      {
+        name: "Umbreon EX",
+        number: "161",
+        imageUrl: "/scarlet-and-violet/prismatic-evolutions/svpe161.png",
+        collected: true,
+        subsetSlug: "prismatic-evolutions",
+      },
+      {
+        name: "Leafeon EX",
+        number: "144",
+        imageUrl: "/scarlet-and-violet/prismatic-evolutions/svpe144.png",
+        collected: true,
+        subsetSlug: "prismatic-evolutions",
+      },
     ],
   });
 }

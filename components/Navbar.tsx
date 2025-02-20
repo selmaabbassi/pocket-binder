@@ -2,24 +2,18 @@ import Link from "next/link";
 
 export function Navbar() {
   return (
-    <div className="navbar bg-base-100">
-      <div className="navbar-start">
-        <Link href="/" className="btn text-xl">
+    <div className="navbar bg-base-100 justify-center fixed bottom-0 left-0 w-full">
+      <div className="navbar-center flex space-x-4">
+        <Link href="/" className="btn btn-primary">
           <span className="material-symbols-outlined">home</span>
         </Link>
-      </div>
-      <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
-          <li>
-            <Link href="/my-collection">My collection</Link>
-          </li>
-          <li>
-            <Link href="/series">Series</Link>
-          </li>
-        </ul>
-      </div>
-      <div className="navbar-end">
-        <Link href="/login" className="btn text-xl">
+        <Link href="/series" className="btn btn-primary">
+          <span className="material-symbols-outlined">auto_stories</span>
+        </Link>
+        <Link href="/my-collection" className="btn btn-primary">
+          <span className="material-symbols-outlined">photo_camera</span>
+        </Link>
+        <Link href="/login" className="btn btn-primary">
           <span className="material-symbols-outlined">person</span>
         </Link>
       </div>
