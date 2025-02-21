@@ -8,9 +8,9 @@ export interface HeaderProps {
 
 export function Header({ title, backUrl, subtitle }: HeaderProps) {
   return (
-    <div className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+    <div className="relative px-4 py-6 flex flex-col items-center text-center">
       {backUrl && (
-        <Link href={backUrl} className="absolute left-60 btn btn-primary">
+        <Link href={backUrl} className="absolute left-1 btn btn-primary">
           <span className="material-symbols-outlined">arrow_back</span>
         </Link>
       )}

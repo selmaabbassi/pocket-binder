@@ -1,5 +1,5 @@
-import { Header } from "../../../components/Header";
-import { SeriesLink } from "../../../components/SeriesLink";
+import { Header } from "../components/Header";
+import { SeriesLink } from "../components/SeriesLink";
 import { Series } from "@prisma/client";
 
 async function getSeries() {

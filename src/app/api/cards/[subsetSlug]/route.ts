@@ -9,6 +9,7 @@ export async function GET(
 ) {
   const cards = await prisma.card.findMany({
     where: { subsetSlug: params.subsetSlug },
+    orderBy: { number: "asc" },
   });
 
   if (cards.length === 0) {

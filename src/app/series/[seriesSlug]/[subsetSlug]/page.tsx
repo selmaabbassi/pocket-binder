@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Header } from "../../../../../components/Header";
+import { Header } from "../../../components/Header";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Card, Series, Subset } from "@prisma/client";
@@ -64,45 +64,41 @@ export default function CardsPage() {
         subtitle={selectedSubset?.name || ""}
       />
 
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="grid grid-cols-4 grid-rows-5 gap-4">
-          {cards.map((card) => (
-            <div
-              key={card.id}
-              className={`card w-96 shadow-xl transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl ${
+      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 sm:px-6 md:px-8 lg:px-12">
+        {cards.map((card) => (
+          <div
+            key={card.id}
+            className={`relative w-full max-w-[300px] mx-auto aspect-[733/1024] overflow-hidden rounded-lg transition-transform duration-300 hover:scale-105 ${
+              card.collected ? "bg-green-600" : "shadow-lg"
+            }`}
+          >
+            <Image
+              src={card.imageUrl}
+              layout="fill"
+              objectFit="contain"
+              alt={card.name}
+              className="absolute inset-0 w-full h-full"
+            />
+
+            {card.collected && (
+              <div className="absolute inset-0 bg-green-500 opacity-30"></div>
+            )}
+
+            {/* Floating Button (Responsive Positioning) */}
+            <button
+              className={`absolute bottom-2 right-2 sm:bottom-4 sm:right-4 px-3 py-2 text-white rounded-full transition-all duration-300 ${
                 card.collected
-                  ? "bg-green-200 border border-green-500"
-                  : "bg-base-100"
+                  ? "bg-red-500 hover:bg-red-700"
+                  : "bg-green-500 hover:bg-green-700"
               }`}
+              onClick={() => toggleCollected(card.id, card.collected)}
             >
-              <figure className="px-10 pt-10">
-                <Image
-                  src={card.imageUrl}
-                  width={250}
-                  height={250}
-                  alt={card.name}
-                />
-              </figure>
-              <div className="card-body text-center">
-                <h2>
-                  <b>#{card.number}</b> {card.name}
-                </h2>
-                <div className="card-actions justify-end">
-                  <button
-                    className={`btn ${
-                      card.collected ? "btn-error" : "btn-success"
-                    }`}
-                    onClick={() => toggleCollected(card.id, card.collected)}
-                  >
-                    <span className="material-symbols-outlined">
-                      {card.collected ? "close" : "check"}
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              <span className="material-symbols-outlined text-lg sm:text-xl">
+                {card.collected ? "close" : "check"}
+              </span>
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
